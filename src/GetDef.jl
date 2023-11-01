@@ -2,6 +2,8 @@ module GetDef
 
 export @get, @getdef
 
+cache(d::AbstractDict) = d
+
 function getdef_helper(call, body)
   f_sym = call.args[1]
   f_args = call.args[2:end]
@@ -17,7 +19,7 @@ macro getdef(call, body)
 end
 
 function add_on_call(f_sym, call)
-  storage = call.args[2]
+  firstinput = call.args[2]
   f_args = call.args[2:end]
   f_sym_new = Symbol(:get_, f_sym)
   f_sym_quotenode = QuoteNode(f_sym)
@@ -25,8 +27,7 @@ function add_on_call(f_sym, call)
   call.args[1] = f_sym_new
   s = gensym()
   quote
-    $s = $storage
-    $f_sym = $get!(() -> $call, $s, $f_sym_quotenode)
+    $f_sym = $get!(() -> $call, $(cache)($firstinput), $f_sym_quotenode)
   end
 end
 
