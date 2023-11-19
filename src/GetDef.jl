@@ -2,6 +2,12 @@ module GetDef
 
 export @get, @getdef
 
+
+"""
+    cache(d::AbstractDict)
+
+Return the mutable cache for a model object.
+"""
 cache(d::AbstractDict) = d
 
 function getdef_helper(call, body)
